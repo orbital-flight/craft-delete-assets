@@ -13,13 +13,13 @@ This plugin is in active development and will feature upcoming quality of life u
 ## Disclaimer
 The plugin checks the relations table, so it should work in almost every case.
 
-However, even though the plugin has been thoroughly tested with Craft, Craft Commerce, and most typical Craft installations, it still involves the hard deletion of content, you shoul therefore use it with caution. 
+However, and even though the plugin has been thoroughly tested with Craft, Craft Commerce, and most typical Craft installations, it still involves the hard deletion of content, you should therefore use it with caution. 
 
 **We strongly advise you to have backups of your data, assets, and database in case anything goes wrong.**
 
 If any third-party plugin or custom code uses assets from your volumes without recording the relation in the Craft database, you \***will**\* permanently lose them.
 
-Additionally, if the volume from which you want to delete assets is shared by other Craft installations (*for example, a staging installation sharing an Amazon S3 volume with the production environment*), the plugin will check for relations with the database linked to the project from which it is run. 
+Additionally, if the volume from which you want to delete assets is shared by other Craft installations (*i.e a staging installation sharing an Amazon S3 volume with the production environment*), the plugin will check for relations with the database linked to the project from which it is run. 
 This means it may delete assets that are potentially used in other installation(s).
 
 ## Requirements
