@@ -1,0 +1,54 @@
+{
+    "name": "orbital-flight/craft-delete-assets",
+    "description": "Free up space by getting rid of those unused assets!",
+    "type": "craft-plugin",
+    "license": "mit",
+    "version": "1.0.0",
+    "support": {
+        "email": "flightorbital@gmail.com",
+        "issues": "https://github.com/orbital-flight/craft-delete-assets/issues?state=open",
+        "source": "https://github.com/orbital-flight/craft-delete-assets",
+        "docs": "https://github.com/orbital-flight/craft-delete-assets",
+        "rss": "https://github.com/orbital-flight/craft-delete-assets/releases.atom"
+    },
+    "authors": [
+        {
+          "name": "Orbital Flight"
+        }
+    ],
+    "require": {
+        "php": ">=8.0.2",
+        "craftcms/cms": "^4.3.5"
+    },
+    "require-dev": {
+        "craftcms/ecs": "dev-main",
+        "craftcms/phpstan": "dev-main"
+    },
+    "autoload": {
+        "psr-4": {
+            "orbitalflight\\deleteassets\\": "src/"
+        }
+    },
+    "extra": {
+        "handle": "delete-assets",
+        "name": "Delete Unused Assets",
+        "developer": "Orbital Flight",
+        "documentationUrl": "https://github.com/orbital-flight/craft-delete-assets"
+    },
+    "scripts": {
+        "check-cs": "ecs check --ansi",
+        "fix-cs": "ecs check --ansi --fix",
+        "phpstan": "phpstan --memory-limit=1G"
+    },
+    "config": {
+        "sort-packages": true,
+        "platform": {
+            "php": "8.0.2"
+        },
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true,
+            "craftcms/plugin-installer": true
+        }
+    }
+}
+

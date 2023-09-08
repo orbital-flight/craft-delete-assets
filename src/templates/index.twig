@@ -1,0 +1,191 @@
+{# ? @copyright Copyright (c) Orbital Flight #}
+
+{% extends "_layouts/cp" %}
+
+{% import "_includes/forms.twig" as forms %}
+
+{% set title = "Delete Unused Assets" %}
+
+{% block content %}
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+    {% set volumes = craft.app.volumes().allVolumes %}
+
+    {% if volumes is empty %}
+        <b class="error">Error: Your project does not feature any volumes.</b>
+    {% else %}
+        {% for volume in volumes %}
+            {% if loop.index != 1 %}
+                <hr>
+            {% endif %}
+
+            <h1>{{ volume.name }}</h1>
+
+            {% set totalAssets = craft.assets.volumeId(volume.id).count() %}
+
+            {% if totalAssets == 0 %}
+                <b class="error">This volume is empty.</b>
+            {% else %}
+
+                {# Check if this volume has been parsed already and if data is outdated #}
+                {% set dua = craft.deleteAssets.getVolume(volume.id) %}
+                {% if dua is null or dua != totalAssets %}
+
+                    {% set errorMsg = (dua is null) ? "This volume has never been scanned." : "The scan is outdated. Please start a new analysis for this volume." %}
+                    <p class="error">
+                        <b>{{ errorMsg }}</b>
+                    </p>
+
+                    <form method="post">
+                        {{ csrfInput() }}
+                        {{ actionInput('delete-assets/dua/scan') }}
+                        {{ hiddenInput('volume-id', volume.id ) }}
+
+                        {{ forms.submitButton({
+                            label: "Analyze",
+                            spinner: true,
+                        }) }}
+                    </form>
+
+                {% else %}
+
+                    <div class="bar">
+                        <div class="bar-filling">
+                            <div class="bar-removable" style="width:{{ dua.deletableAssetsRatio }}%;">
+                                <span class="bar-revisions" style="width:{{ dua.revisionAssetsRatio }}%;background-color:orange;"></span>
+                                <span class="bar-unused" style="width:{{ dua.unusedAssetsRatio }}%;background-color:red;"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="legend">
+                        <li style="color:green;">
+                            <span class="material-symbols-outlined pad-right">dataset_linked</span>
+                            Used assets –
+                            {{ dua.usedAssets }}/{{ totalAssets }}
+                            ({{ dua.usedAssetsSize }})
+                        </li>
+
+                        <li style="color:orange;">
+                            <span class="material-symbols-outlined pad-right">rebase_edit</span>
+                            Assets used in drafts or revision –
+                            {{ dua.revisionAssets }}/{{ totalAssets }}
+                            ({{ dua.revisionAssetsSize }})
+                        </li>
+
+                        <li style="color:red;">
+                            <span class="material-symbols-outlined pad-right">link_off</span>
+                            Unused assets –
+                            {{ dua.unusedAssets }}/{{ totalAssets }}
+                            ({{ dua.unusedAssetsSize }})
+                        </li>
+                    </ul>
+
+                    <form method="post">
+                        {{ csrfInput() }}
+                        {{ actionInput('delete-assets/dua/scan') }}
+                        {{ hiddenInput('volume-id', volume.id ) }}
+
+                        {{ forms.button({
+                            label: "Re-scan",
+                            type: "submit",
+                            spinner: true,
+                        }) }}
+                    </form>
+
+                    <form method="post">
+                        {{ csrfInput() }}
+                        {{ actionInput('delete-assets/dua/delete') }}
+                        {{ hiddenInput('volume-id', volume.id ) }}
+
+                        {{ forms.lightSwitchField({
+                            label: "What to Delete?",
+                            offLabel: "Delete unused assets only",
+                            onLabel: "Delete unused assets AND drafts/revisions assets",
+                            name: "delete-revisions",
+                        }) }}
+
+                        {{ forms.submitButton({
+                            label: "Delete Unused Assets",
+                            spinner: true,
+                        }) }}
+                    </form>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {# CSS AND JS #}
+    {% css %}
+        .bar {
+            width: 100%;
+            height: 1.5rem;
+            border: .2rem solid #36404b;
+            border-radius: 30rem;
+            overflow: hidden;
+            padding: .2rem;
+        }
+
+        .bar-filling {
+            position: relative;
+            height: 100%;
+            width: 100%;
+            background-color: green;
+            border-radius: 30rem;
+            overflow: hidden;
+        }
+
+        .bar-removable {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            display: flex;
+            justify-content: end;
+        }
+
+        .bar-removable span {
+            height: 100%;
+        }
+
+        .legend {
+            margin: 1rem;
+            font-weight: 700;
+        }
+
+        .legend li {
+            font-size: 1rem;
+            display: flex;
+            padding: .25rem 0;
+        }
+
+        .pad-right {
+            padding-right: 1rem;
+        }
+    {% endcss %}
+
+    {% js %}
+        let buttons = document.querySelectorAll('button');
+        let showSpinner = e => {
+            let target = e.currentTarget;
+            if (target.classList.contains('loading')) {
+                e.preventDefault();
+                e.stopPropagation();
+            } else {
+                let targetLabel = target.querySelector('.label');
+
+                if (targetLabel) {
+                    target.classList.add('loading');
+                    targetLabel.style.opacity = 0;
+                }
+            }
+        };
+
+        if (buttons.length > 0) {
+            for (let btn of buttons) {
+                btn.addEventListener('click', showSpinner);
+            }
+        }
+    {% endjs %}
+
+
+{% endblock %}
