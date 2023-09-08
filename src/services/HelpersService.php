@@ -5,7 +5,6 @@
 
 namespace orbitalflight\deleteassets\services;
 
-use Craft;
 use craft\base\Component;
 
 class HelpersService extends Component {

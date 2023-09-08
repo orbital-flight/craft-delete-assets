@@ -7,7 +7,6 @@ namespace orbitalflight\deleteassets\controllers;
 
 use Craft;
 use craft\web\Controller;
-use craft\web\View;
 use orbitalflight\deleteassets\Plugin;
 
 class DuaController extends Controller {
@@ -30,7 +29,13 @@ class DuaController extends Controller {
             return $this->setFailFlash("An error occurred whith the scan.");
         }
     }
-
+    
+    /**
+     * actionDelete
+     * Will request the current volume to be scanned and for unused assets to be deleted
+     *
+     * @return void
+     */
     public function actionDelete() {
         $this->requireCpRequest();
         $this->requirePostRequest();

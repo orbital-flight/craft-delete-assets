@@ -1,12 +1,10 @@
 <?php
-
 /**
  * @copyright Copyright (c) Orbital Flight
  */
 
 namespace orbitalflight\deleteassets\models;
 
-use Craft;
 use craft\base\Model;
 
 class DuaModel extends Model {

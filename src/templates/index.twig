@@ -41,8 +41,9 @@
                         {{ actionInput('delete-assets/dua/scan') }}
                         {{ hiddenInput('volume-id', volume.id ) }}
 
-                        {{ forms.submitButton({
+                        {{ forms.button({
                             label: "Analyze",
+                            type: "submit",
                             spinner: true,
                         }) }}
                     </form>
