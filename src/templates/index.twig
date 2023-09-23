@@ -8,8 +8,12 @@
 
 {% block content %}
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+    {# Variables and content #}
     {% set volumes = craft.app.volumes().allVolumes %}
+    {% set usedAssetsColor = plugin('delete-assets').settings.usedAssetsColor %}
+    {% set revisionAssetsColor = plugin('delete-assets').settings.revisionAssetsColor %}
+    {% set unusedAssetsColor = plugin('delete-assets').settings.unusedAssetsColor %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
 
     {% if volumes is empty %}
         <b class="error">Error: Your project does not feature any volumes.</b>
@@ -53,27 +57,27 @@
                     <div class="bar">
                         <div class="bar-filling">
                             <div class="bar-removable" style="width:{{ dua.deletableAssetsRatio }}%;">
-                                <span class="bar-revisions" style="width:{{ dua.revisionAssetsRatio }}%;background-color:orange;"></span>
-                                <span class="bar-unused" style="width:{{ dua.unusedAssetsRatio }}%;background-color:red;"></span>
+                                <span class="bar-revisions" style="width:{{ dua.revisionAssetsRatio }}%;background-color:#{{ revisionAssetsColor }};"></span>
+                                <span class="bar-unused" style="width:{{ dua.unusedAssetsRatio }}%;background-color:#{{ unusedAssetsColor }};"></span>
                             </div>
                         </div>
                     </div>
                     <ul class="legend">
-                        <li style="color:green;">
+                        <li style="color:#{{ usedAssetsColor }};">
                             <span class="material-symbols-outlined pad-right">dataset_linked</span>
                             Used assets –
                             {{ dua.usedAssets }}/{{ totalAssets }}
                             ({{ dua.usedAssetsSize }})
                         </li>
 
-                        <li style="color:orange;">
+                        <li style="color:#{{ revisionAssetsColor }};">
                             <span class="material-symbols-outlined pad-right">rebase_edit</span>
                             Assets used in drafts or revision –
                             {{ dua.revisionAssets }}/{{ totalAssets }}
                             ({{ dua.revisionAssetsSize }})
                         </li>
 
-                        <li style="color:red;">
+                        <li style="color:#{{ unusedAssetsColor }};">
                             <span class="material-symbols-outlined pad-right">link_off</span>
                             Unused assets –
                             {{ dua.unusedAssets }}/{{ totalAssets }}
@@ -130,7 +134,7 @@
             position: relative;
             height: 100%;
             width: 100%;
-            background-color: green;
+            background-color: #{{ usedAssetsColor }};
             border-radius: 30rem;
             overflow: hidden;
         }

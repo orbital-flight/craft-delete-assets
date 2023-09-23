@@ -26,7 +26,7 @@ use orbitalflight\deleteassets\variables\DuaVariable;
  */
 class Plugin extends BasePlugin {
     public string $schemaVersion = '1.0.0';
-    public bool $hasCpSettings = false;
+    public bool $hasCpSettings = true;
     public bool $hasCpSection = true;
 
     public static function config(): array {
