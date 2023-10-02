@@ -12,7 +12,7 @@ use craft\base\Model;
  */
 class Settings extends Model {
     // == Properties --------------------------------
-    public string $usedAssetsColor = "9fe2bf"; // Color of the used assets on the frontend rendering
+    public string $usedAssetsColor = "12e193"; // Color of the used assets on the frontend rendering
     public string $revisionAssetsColor = "ffbf00"; // Color of the used assets on the frontend rendering
     public string $unusedAssetsColor = "e12d39"; // Color of the used assets on the frontend rendering
 

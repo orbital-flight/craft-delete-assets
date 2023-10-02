@@ -3,7 +3,7 @@
     "description": "Free up space by getting rid of those unused assets!",
     "type": "craft-plugin",
     "license": "mit",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "support": {
         "email": "flightorbital@gmail.com",
         "issues": "https://github.com/orbital-flight/craft-delete-assets/issues?state=open",

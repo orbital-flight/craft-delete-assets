@@ -130,19 +130,30 @@ class DuaService extends Component {
                 $relationType = $delete ? 4 : 3;
             } else {
                 // C) If relations are found, parse them and fetch its related Element
+                $ghostRelations = 0;
                 foreach ($relations as $currentRelation) {
                     if ($relationType != 1) { // Will skip if asset is already found to be "used"
                         $relatedElement = Craft::$app->elements->getElementById($currentRelation['sourceId']);
-                        if (!ElementHelper::isDraftOrRevision($relatedElement)) {
+                        if (!$relatedElement) {
+                            // Relation exists but the element does not anymore, it's a ghost relation
+                            $ghostRelations++;
+                            Craft::info('[DUA] – Relation between Asset ' . $currentAsset->id . ' and Element ' . $currentRelation['sourceId'] . ' exists but Element is null.');
+                        } elseif (!ElementHelper::isDraftOrRevision($relatedElement)) {
                             // D) If the related element is not a draft or a revision, the Asset is used. We can skip further verifications (type 1)
                             $relationType = 1;
                         }
                     }
                 }
 
-                // E) If all relations were drafts or revisions, the Asset is a "revision Asset" (type 2)
+                // E) If no relation turned with a case 1 (Used)...
                 if ($relationType != 1) {
-                    $relationType = ($delete && $deleteRevisions) ? 4 : 2;
+                    if ($ghostRelations == count($relations)) {
+                        // All relations were registered but linked to nothing, hence it's a "Unused Asset" (type 3)
+                        $relationType = $delete ? 4 : 3;
+                    } else {
+                        // At least one remaining relation was a draft or a revision, the Asset is a "revision Asset" (type 2)
+                        $relationType = ($delete && $deleteRevisions) ? 4 : 2;
+                    }
                 }
             }
 
