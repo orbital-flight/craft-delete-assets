@@ -4,7 +4,7 @@
 
 {% import "_includes/forms.twig" as forms %}
 
-{% set title = "Delete Unused Assets" %}
+{% set title = "Delete Unused Assets"|t('delete-assets') %}
 
 {% block content %}
 
@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
 
     {% if volumes is empty %}
-        <b class="error">Error: Your project does not feature any volumes.</b>
+        <b class="error">{{ "Error: Your project does not feature any volumes."|t('delete-assets') }}</b>
     {% else %}
         {% for volume in volumes %}
             {% if loop.index != 1 %}
@@ -28,14 +28,14 @@
             {% set totalAssets = craft.assets.volumeId(volume.id).count() %}
 
             {% if totalAssets == 0 %}
-                <b class="error">This volume is empty.</b>
+                <b class="error">{{ "This volume is empty."|t('delete-assets') }}</b>
             {% else %}
 
                 {# Check if this volume has been parsed already and if data is outdated #}
                 {% set dua = craft.deleteAssets.getVolume(volume.id) %}
                 {% if dua is null or dua != totalAssets %}
 
-                    {% set errorMsg = (dua is null) ? "This volume has never been scanned." : "The scan is outdated. Please start a new analysis for this volume." %}
+                    {% set errorMsg = (dua is null) ? "This volume has never been scanned."|t('delete-assets') : "The scan is outdated. Please start a new analysis for this volume."|t('delete-assets') %}
                     <p class="error">
                         <b>{{ errorMsg }}</b>
                     </p>
@@ -46,7 +46,7 @@
                         {{ hiddenInput('volume-id', volume.id ) }}
 
                         {{ forms.button({
-                            label: "Analyze",
+                            label: "Analyze"|t('delete-assets'),
                             type: "submit",
                             spinner: true,
                         }) }}
@@ -65,21 +65,21 @@
                     <ul class="legend">
                         <li style="color:#{{ usedAssetsColor }};">
                             <span class="material-symbols-outlined pad-right">dataset_linked</span>
-                            Used assets –
+                            {{ "Used assets"|t('delete-assets') }} –
                             {{ dua.usedAssets }}/{{ totalAssets }}
                             ({{ dua.usedAssetsSize }})
                         </li>
 
                         <li style="color:#{{ revisionAssetsColor }};">
                             <span class="material-symbols-outlined pad-right">rebase_edit</span>
-                            Assets used in drafts or revision –
+                            {{ "Assets used in drafts or revision"|t('delete-assets') }} –
                             {{ dua.revisionAssets }}/{{ totalAssets }}
                             ({{ dua.revisionAssetsSize }})
                         </li>
 
                         <li style="color:#{{ unusedAssetsColor }};">
                             <span class="material-symbols-outlined pad-right">link_off</span>
-                            Unused assets –
+                            {{ "Unused assets"|t('delete-assets') }} –
                             {{ dua.unusedAssets }}/{{ totalAssets }}
                             ({{ dua.unusedAssetsSize }})
                         </li>
@@ -91,7 +91,7 @@
                         {{ hiddenInput('volume-id', volume.id ) }}
 
                         {{ forms.button({
-                            label: "Re-scan",
+                            label: "Re-scan"|t('delete-assets'),
                             type: "submit",
                             spinner: true,
                         }) }}
@@ -103,14 +103,14 @@
                         {{ hiddenInput('volume-id', volume.id ) }}
 
                         {{ forms.lightSwitchField({
-                            label: "What to Delete?",
-                            offLabel: "Delete unused assets only",
-                            onLabel: "Delete unused assets AND drafts/revisions assets",
+                            label: "What to Delete?"|t('delete-assets'),
+                            offLabel: "Delete unused assets only"|t('delete-assets'),
+                            onLabel: "Delete unused assets AND drafts/revisions assets"|t('delete-assets'),
                             name: "delete-revisions",
                         }) }}
 
                         {{ forms.submitButton({
-                            label: "Delete Unused Assets",
+                            label: "Delete Unused Assets"|t('delete-assets'),
                             spinner: true,
                         }) }}
                     </form>

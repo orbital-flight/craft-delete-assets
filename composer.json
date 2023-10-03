@@ -13,7 +13,8 @@
     },
     "authors": [
         {
-          "name": "Orbital Flight"
+          "name": "Orbital Flight",
+          "homepage": "https://github.com/orbital-flight"
         }
     ],
     "require": {

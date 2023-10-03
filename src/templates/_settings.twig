@@ -4,12 +4,12 @@
 
 {% import '_includes/forms.twig' as forms %}
 
-<h1>Accessibility</h1>
+<h1>{{ "Accessibility"|t('delete-assets') }}</h1>
 
 {{ forms.colorField({
     first: true,
-    label: "Used assets color:",
-    instructions: "The color used to represent the assets which are currently in use in your project:",
+    label: "Used assets color:"|t('delete-assets'),
+    instructions: "The color used to represent the assets which are currently in use in your project:"|t('delete-assets'),
     name: "usedAssetsColor",
     value: settings.usedAssetsColor,
     errors: settings.getErrors('usedAssetsColor'),
@@ -17,8 +17,8 @@
 }) }}
 
 {{ forms.colorField({
-    label: "Revision and drafts assets color:",
-    instructions: "The color used to represent the assets which are currently not in use in your project but used in drafts and revisions:",
+    label: "Revision and drafts assets color:"|t('delete-assets'),
+    instructions: "The color used to represent the assets which are currently not in use in your project but used in drafts and revisions:"|t('delete-assets'),
     name: "revisionAssetsColor",
     value: settings.revisionAssetsColor,
     errors: settings.getErrors('revisionAssetsColor'),
@@ -26,8 +26,8 @@
 }) }}
 
 {{ forms.colorField({
-    label: "Unused assets color:",
-    instructions: "The color used to represent the assets which are not currently in use in your project:",
+    label: "Unused assets color:"|t('delete-assets'),
+    instructions: "The color used to represent the assets which are not currently in use in your project:"|t('delete-assets'),
     name: "unusedAssetsColor",
     value: settings.unusedAssetsColor,
     errors: settings.getErrors("unusedAssetsColor"),

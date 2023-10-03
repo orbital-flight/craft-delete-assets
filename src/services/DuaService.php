@@ -27,7 +27,7 @@ class DuaService extends Component {
      */
     private function _checkVolume($volumeId) {
         if (!in_array($volumeId, Craft::$app->getVolumes()->allVolumeIds)) {
-            throw new NotFoundHttpException("Volume not found");
+            throw new NotFoundHttpException(Craft::t('delete-assets', "Volume not found"));
         }
     }
 

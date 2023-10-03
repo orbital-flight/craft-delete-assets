@@ -1,5 +1,9 @@
 # Release Notes for Delete Unused Assets
 
+## 1.1.2 - UNRELEASED
+### Added
+* Added French translation. Bonjour 🔥
+
 ## 1.1.1 - 2023.10.02
 ### Fixed
 * Fixed a bug where the scan crashed to a `TypeError` when an `Asset` was related to an inexistent `Element`.

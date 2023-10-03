@@ -5,6 +5,7 @@
 
 namespace orbitalflight\deleteassets\models;
 
+use Craft;
 use craft\base\Model;
 
 /**
@@ -20,7 +21,7 @@ class Settings extends Model {
     public function rules(): array {
         return [
             [['usedAssetsColor', 'revisionAssetsColor', 'unusedAssetsColor'], 'required'],
-            [['usedAssetsColor', 'revisionAssetsColor', 'unusedAssetsColor'], 'match', 'pattern' => '/^([0-9a-fA-F]{3}){1,2}$/', 'message' => 'Invalid color format.']
+            [['usedAssetsColor', 'revisionAssetsColor', 'unusedAssetsColor'], 'match', 'pattern' => '/^([0-9a-fA-F]{3}){1,2}$/', 'message' => Craft::t('delete-assets', Craft::t('delete-assets', 'Invalid color format.'))]
         ];
     }
 }

@@ -24,9 +24,9 @@ class DuaController extends Controller {
         $volumeId = Craft::$app->getRequest()->getRequiredBodyParam('volume-id');
         
         if (Plugin::getInstance()->services->scan($volumeId)) {
-            return $this->setSuccessFlash("Scan completed!");
+            return $this->setSuccessFlash(Craft::t('delete-assets', "Scan completed!"));
         } else {
-            return $this->setFailFlash("An error occurred whith the scan.");
+            return $this->setFailFlash(Craft::t('delete-assets', "An error occurred whith the scan."));
         }
     }
     
@@ -46,11 +46,11 @@ class DuaController extends Controller {
         $deleteAssets = Plugin::getInstance()->services->scan($volumeId, true, $deleteRevisions);
 
         if ($deleteAssets === 0) {
-            $this->setFailFlash("No assets were deleted...");
+            $this->setFailFlash(Craft::t('delete-assets', "No assets were deleted..."));
         } else if (!$deleteAssets) {
-            return $this->setFailFlash("An error occurred!");
+            return $this->setFailFlash(Craft::t('delete-assets', "An error occurred!"));
         } else {
-            return $this->setSuccessFlash("Succesfully deleted " . $deleteAssets . " assets.");
+            return $this->setSuccessFlash(Craft::t('delete-assets', "Succesfully deleted {0} asset(s).", [$deleteAssets]));
         }
     }
 }
