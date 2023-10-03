@@ -1,6 +1,6 @@
 # Release Notes for Delete Unused Assets
 
-## 1.1.2 - UNRELEASED
+## 1.1.2 - 2023.10.02
 ### Added
 * Added French translation. Bonjour 🔥
 
