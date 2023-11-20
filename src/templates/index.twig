@@ -10,6 +10,7 @@
 
     {# Variables and content #}
     {% set volumes = craft.app.volumes().allVolumes %}
+    {% set autoscan = plugin('delete-assets').settings.autoscan %}
     {% set usedAssetsColor = plugin('delete-assets').settings.usedAssetsColor %}
     {% set revisionAssetsColor = plugin('delete-assets').settings.revisionAssetsColor %}
     {% set unusedAssetsColor = plugin('delete-assets').settings.unusedAssetsColor %}
@@ -18,12 +19,25 @@
     {% if volumes is empty %}
         <b class="error">{{ "Error: Your project does not feature any volumes."|t('delete-assets') }}</b>
     {% else %}
+
+        <form method="post">
+            {{ csrfInput() }}
+            {{ actionInput('delete-assets/dua/scan-all') }}
+
+            {{ forms.submitButton({
+                label: "Analyze all volumes"|t('delete-assets'),
+                spinner: true,
+            }) }}
+        </form>
+
+        <hr>
+
         {% for volume in volumes %}
             {% if loop.index != 1 %}
                 <hr>
             {% endif %}
 
-            <h1>{{ volume.name }}</h1>
+            <h1 id="dua-{{ volume.id }}">{{ volume.name }}</h1>
 
             {% set totalAssets = craft.assets.volumeId(volume.id).count() %}
 
@@ -33,24 +47,28 @@
 
                 {# Check if this volume has been parsed already and if data is outdated #}
                 {% set dua = craft.deleteAssets.getVolume(volume.id) %}
-                {% if dua is null or dua != totalAssets %}
+                {% if dua is null or dua is defined and (dua.outdated or dua != totalAssets) %}
+                    {% if autoscan %}
+                        {% do craft.deleteAssets.autoscan(volume.id) %}
+                        {% redirect craft.app.request.absoluteUrl %}
+                    {% else %}
+                        {% set errorMsg = (dua is null) ? "This volume has never been scanned."|t('delete-assets') : "The scan is outdated. Please start a new analysis for this volume."|t('delete-assets') %}
+                        <p class="error">
+                            <b>{{ errorMsg }}</b>
+                        </p>
 
-                    {% set errorMsg = (dua is null) ? "This volume has never been scanned."|t('delete-assets') : "The scan is outdated. Please start a new analysis for this volume."|t('delete-assets') %}
-                    <p class="error">
-                        <b>{{ errorMsg }}</b>
-                    </p>
+                        <form method="post">
+                            {{ csrfInput() }}
+                            {{ actionInput('delete-assets/dua/scan') }}
+                            {{ hiddenInput('volume-id', volume.id ) }}
 
-                    <form method="post">
-                        {{ csrfInput() }}
-                        {{ actionInput('delete-assets/dua/scan') }}
-                        {{ hiddenInput('volume-id', volume.id ) }}
-
-                        {{ forms.button({
-                            label: "Analyze"|t('delete-assets'),
-                            type: "submit",
-                            spinner: true,
-                        }) }}
-                    </form>
+                            {{ forms.button({
+                                label: "Analyze"|t('delete-assets'),
+                                type: "submit",
+                                spinner: true,
+                            }) }}
+                        </form>
+                    {% endif %}
 
                 {% else %}
 
@@ -94,26 +112,31 @@
                             label: "Re-scan"|t('delete-assets'),
                             type: "submit",
                             spinner: true,
-                        }) }}
+                        }) }} 
+                        &nbsp;– {{ "Last scan:"|t('delete-assets') }} {{ dua.age }}.
                     </form>
 
-                    <form method="post">
-                        {{ csrfInput() }}
-                        {{ actionInput('delete-assets/dua/delete') }}
-                        {{ hiddenInput('volume-id', volume.id ) }}
+                    {% if currentUser.can('dua-' ~ volume.id) %}
+                        <form method="post">
+                            {{ csrfInput() }}
+                            {{ actionInput('delete-assets/dua/delete') }}
+                            {{ hiddenInput('volume-id', volume.id ) }}
 
-                        {{ forms.lightSwitchField({
-                            label: "What to Delete?"|t('delete-assets'),
-                            offLabel: "Delete unused assets only"|t('delete-assets'),
-                            onLabel: "Delete unused assets AND drafts/revisions assets"|t('delete-assets'),
-                            name: "delete-revisions",
-                        }) }}
+                            {{ forms.lightSwitchField({
+                                label: "What to Delete?"|t('delete-assets'),
+                                offLabel: "Delete unused assets only"|t('delete-assets'),
+                                onLabel: "Delete unused assets AND drafts/revisions assets"|t('delete-assets'),
+                                name: "delete-revisions",
+                            }) }}
 
-                        {{ forms.submitButton({
-                            label: "Delete Unused Assets"|t('delete-assets'),
-                            spinner: true,
-                        }) }}
+                            {{ forms.submitButton({
+                                label: "Delete Unused Assets"|t('delete-assets'),
+                                spinner: true,
+                            }) }}
                     </form>
+                    {% else %}
+                        <b class="error"><br>{{ "You are not allowed to delete assets from this volume."|t('delete-assets') }}</br>
+                    {% endif %}
                 {% endif %}
             {% endif %}
         {% endfor %}
@@ -190,6 +213,14 @@
                 btn.addEventListener('click', showSpinner);
             }
         }
+
+        // Scroll to the scanned volume
+        {% if scannedVolumeId is defined %}
+            let scannedVolume = document.querySelector('#dua-{{ scannedVolumeId }}');
+            if (scannedVolume) {
+                scannedVolume.scrollIntoView({ behavior: "instant", block: "center" });
+            }
+        {% endif %}
     {% endjs %}
 
 

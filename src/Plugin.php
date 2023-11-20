@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) Orbital Flight
  */
@@ -8,6 +9,10 @@ namespace orbitalflight\deleteassets;
 use Craft;
 use craft\base\Model;
 use craft\base\Plugin as BasePlugin;
+use craft\elements\Asset;
+use craft\events\ModelEvent;
+use craft\events\RegisterUserPermissionsEvent;
+use craft\services\UserPermissions;
 use craft\web\twig\variables\CraftVariable;
 use yii\base\Event;
 use orbitalflight\deleteassets\models\Settings;
@@ -41,7 +46,7 @@ class Plugin extends BasePlugin {
         parent::init();
 
         // Defer most setup tasks until Craft is fully initialized
-        Craft::$app->onInit(function() {
+        Craft::$app->onInit(function () {
             $this->attachEventHandlers();
             // ...
         });
@@ -53,12 +58,66 @@ class Plugin extends BasePlugin {
         ]);
 
         // Register variable
-        Event::on(CraftVariable::class, 
-        CraftVariable::EVENT_INIT, 
-        function(Event $event){
-            $variable = $event->sender;
-            $variable->set('deleteAssets', DuaVariable::class);
-        });
+        Event::on(
+            CraftVariable::class,
+            CraftVariable::EVENT_INIT,
+            function (Event $event) {
+                $variable = $event->sender;
+                $variable->set('deleteAssets', DuaVariable::class);
+            }
+        );
+
+        // Register permiissions
+        Event::on(
+            UserPermissions::class,
+            UserPermissions::EVENT_REGISTER_PERMISSIONS,
+            function (RegisterUserPermissionsEvent $event) {
+
+                $permissionVolumes = $this->services->getPermissionVolumes();
+
+                $duaPermissions = [];
+
+                $duaPermissions['dua-access'] = [
+                    'label' => "Perform a deletion action",
+                    'nested' => $permissionVolumes,
+                ];
+
+                $event->permissions[] = [
+                    'heading' => "Delete Unused Assets",
+                    'permissions' => $duaPermissions,
+                ];
+            }
+        );
+
+        // * Auto-detect outdated volumes
+        // When an asset is deleted
+        Event::on(
+            Asset::class,
+            Asset::EVENT_AFTER_DELETE,
+            function (Event $event) {
+                $asset = $event->sender;
+                $this->services->markVolumeAsOutdated($asset->getVolumeId());
+            }
+        );
+
+        // When an asset is saved
+        Event::on(
+            Asset::class,
+            Asset::EVENT_AFTER_SAVE,
+            function (ModelEvent $event) {
+                $asset = $event->sender;
+                $this->services->markVolumeAsOutdated($asset->getVolumeId());
+            }
+        );
+    }
+
+    public function getCpNavItem(): ?array {
+        $item = parent::getCpNavItem();
+        if ($this->getSettings()->showBadge) {
+            $item['badgeCount'] = $this->services->getBadgeCount();
+        }
+
+        return $item;
     }
 
     protected function createSettingsModel(): ?Model {

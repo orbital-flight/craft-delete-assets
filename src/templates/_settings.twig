@@ -4,6 +4,41 @@
 
 {% import '_includes/forms.twig' as forms %}
 
+<h1>Core settings</h1>
+{{ forms.lightswitchField({
+    first: true,
+    label: "Auto scan when a volume is outdated:"|t('delete-assets'),
+    instructions: "If enabled, outdated volumes will be automatically scanned when the plugin page will be accessed."|t('delete-assets'),
+    name: "autoscan",
+    on: settings.autoscan,
+    onLabel: "ON",
+    offLabel: "OFF",
+    errors: settings.getErrors('autoscan'),
+    warning: "This could slow down the plugin page if there is a large number of assets."|t('delete-assets'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: "Show the badge counter on the control panel:"|t('delete-assets'),
+    instructions: "If enabled, the number of unused assets will be displayed."|t('delete-assets'),
+    name: "showBadge",
+    on: settings.showBadge,
+    onLabel: "ON",
+    offLabel: "OFF",
+    errors: settings.getErrors('showBadge'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: "Badge counter also include draft and revision assets:"|t('delete-assets'),
+    instructions: "If enabled, the displayed number will include inused assets AND draft assets AND revision assets."|t('delete-assets'),
+    name: "badgeIncludeDrafts",
+    on: settings.badgeIncludeDrafts,
+    onLabel: "ON",
+    offLabel: "OFF",
+    errors: settings.getErrors('badgeIncludeDrafts'),
+}) }}
+
+<hr>
+
 <h1>{{ "Accessibility"|t('delete-assets') }}</h1>
 
 {{ forms.colorField({

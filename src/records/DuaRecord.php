@@ -15,7 +15,7 @@ class DuaRecord extends ActiveRecord {
     // == Rules --------------------------------
     public function rules(): array {
         return [
-            [['volumeId', 'totalAssets', 'usedAssets', 'revisionAssets', 'unusedAssets', 'usedAssetsSize', 'revisionAssetsSize', 'unusedAssetsSize' ], 'safe'],
+            [['volumeId', 'outdated', 'locked', 'totalAssets', 'usedAssets', 'revisionAssets', 'unusedAssets', 'usedAssetsSize', 'revisionAssetsSize', 'unusedAssetsSize' ], 'safe'],
         ];
     }
 }

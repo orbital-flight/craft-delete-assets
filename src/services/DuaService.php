@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) Orbital Flight
  */
@@ -32,6 +33,26 @@ class DuaService extends Component {
     }
 
     /**
+     * getBadgeCount
+     * Return the number of assets that could be deleted for the cp badge count.
+     * Also includes the number of draft/revision assets (if enabled in settings)
+     *
+     * @return int
+     */
+    public function getBadgeCount(): int {
+        $i = 0;
+        
+        $i += $this->getUnusedAssets();
+
+        // Also add the number of draft/revision assets (if enabled in settings)
+        if (Plugin::getInstance()->getSettings()->badgeIncludeDrafts) {
+            $i += $this->getRevisionAssets();
+        }
+
+        return $i;
+    }
+
+    /**
      * getDuaModel
      * Requests the results of a previous scan for a given volume and fills data in a new model
      *
@@ -62,6 +83,9 @@ class DuaService extends Component {
             $duaModel->revisionAssetsRatio = Plugin::getInstance()->helpers->getRatio($scanData->revisionAssets, $deletableAssets);
             $duaModel->unusedAssetsRatio = Plugin::getInstance()->helpers->getRatio($scanData->unusedAssets, $deletableAssets);
 
+            // Add scan age
+            $duaModel->age = Plugin::getInstance()->helpers->getAge($scanData->dateUpdated);
+
             $duaModel->validate();
 
             if ($duaModel->getErrors()) {
@@ -73,7 +97,99 @@ class DuaService extends Component {
 
         return null;
     }
+
+    /**
+     * getRevisionAssets
+     * Returns the total number of revision assets.
+     *
+     * @return int
+     */
+    public function getRevisionAssets(): int {
+        $i = 0;
+
+        $allRecords = DuaRecord::find()->all();
+        foreach ($allRecords as $record) {
+            $i += $record->revisionAssets;
+        }
+
+        return $i;
+    }
     
+    /**
+     * getPermissionVolumes
+     * Returns a permissions scheme filled with the system volumes
+     *
+     * @return array
+     */
+    public function getPermissionVolumes(): array {
+        $permissions = [];
+
+        // Get all volumes
+        $volumes = Craft::$app->getVolumes()->getAllVolumes();
+
+        // Assign permissions for each volume
+        foreach ($volumes as $volume) {
+            $permissions['dua-' . $volume->id] = ['label' => $volume->name];
+        }
+
+        return $permissions;
+    }
+
+    /**
+     * getUnusedAssets
+     * Returns the total number of unused assets.
+     *
+     * @return int
+     */
+    public function getUnusedAssets(): int {
+        $i = 0;
+
+        $allRecords = DuaRecord::find()->all();
+        foreach ($allRecords as $record) {
+            $i += $record->unusedAssets;
+        }
+
+        return $i;
+    }
+
+    /**
+     * getUsedAssets
+     * Returns the total number of used assets.
+     *
+     * @return int
+     */
+    public function getUsedAssets(): int {
+        $i = 0;
+
+        $allRecords = DuaRecord::find()->all();
+        foreach ($allRecords as $record) {
+            $i += $record->usedAssets;
+        }
+
+        return $i;
+    }
+        
+    /**
+     * markVolumeAsOutdated
+     *
+     * @param  mixed $volumeId
+     * @return void
+     */
+    public function markVolumeAsOutdated(int $volumeId): void {
+        $record = DuaRecord::find()->where(['volumeID' => $volumeId])->one();
+
+        if (!$record) {
+            // No record = not scanned yet, we can do it now (if autoscan is enabled)
+            if (Plugin::getInstance()->getSettings()->autoscan) {
+                $this->scan($volumeId, false, false);
+            }
+            return;
+        } else {
+            $record->outdated = true;
+            $record->save();
+        }
+    }
+
     /**
      * scan
      * Scans the selected volume, and performs the following actions:
@@ -174,7 +290,7 @@ class DuaService extends Component {
                     $scanData['unusedAssetsSize'] += $currentAsset->size;
                     break;
 
-                case 4: 
+                case 4:
                     Craft::$app->elements->deleteElement($currentAsset);
                     $i++;
                     break;
@@ -188,13 +304,31 @@ class DuaService extends Component {
         $scanData['totalAssets'] = Asset::find()->volumeId($volumeId)->count();
 
         // Save the data in the database
-        // Remove the older scan data, if it exists
-        DuaRecord::deleteAll(['volumeId' => $volumeId]);
-
-        $scanRecord = new DuaRecord();
+        // Find the former data and update it if it exists
+        $scanRecord = DuaRecord::find()->where(['volumeId' => $volumeId])->one();
+        
+        // If it doesn't, create a new record
+        if (!$scanRecord) {
+            $scanRecord = new DuaRecord();
+        }
+        
         $scanRecord->attributes = $scanData;
+        $scanRecord->outdated = false;
         $scanRecord->save();
 
         return $delete ? $i : true;
+    }
+
+    /**
+     * scanAll
+     * Scans all volumes
+     *
+     * @return void
+     */
+    public function scanAll() {
+        $volumesId = Craft::$app->getVolumes()->allVolumeIds;
+        foreach ($volumesId as $id) { // * Could be potentially turned into a queue in a future update
+            $this->scan($id);
+        }
     }
 }

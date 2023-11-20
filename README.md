@@ -10,6 +10,26 @@ The plugin checks the relations table to determine if an asset is used (related 
 
 This plugin is in active development and will feature upcoming quality of life updates along with translations.
 
+## Analyses
+Analyses (also known as scans) are only started from the plugin section*, and thus won't impact your project performance in case it would feature a very large number of assets.
+
+When you access the plugin page, a scan of any unanalyzed volumes is automatically triggered. The plugin also detects if the amount of assets in a given volume has changed since the last scan, which also triggers an analysis.
+
+*As of 2.x, changes in assets relationships are **not** automatically detected (yet), and won't be displayed until the next analysis is performed. This however won't accidentally delete used assets, as any cleanup process always starts a fresh scan of the volume.*
+
+You can disable the auto-scan feature in the plugin settings.
+
+\**See below "Will it slow my project down?"*
+
+## Will it slow my project down?
+The plugin features several guards and routines to make in run like a breeze. 
+Even if it keeps an eye out for changes in your volumes, the plugin would simply mark them as 'outdated' so they can be scanned later (we don't want a scan each time you add a new asset).
+
+**Scans are only run from the plugin's dedicated section** and cannot take place anywhere else without you knowing about it. 
+Those scans can be started manually or triggered automatically in case a volume is flagged as outdated. In the later case, only outdated volumes are scanned (you can disable the autoscan from the plugin settings).
+
+The only exception is whenever you add your first asset in a new volume, in which case a micro-scan is performed to be able to keep track of that volume. This can still be avoided by disabling the autoscan feature in the plugin settings.
+
 ## Disclaimer
 The plugin checks the relations table, so it should work in almost every case.
 

@@ -1,5 +1,21 @@
 # Release Notes for Delete Unused Assets
 
+## 2.0.0 UNRELEASED
+### Added
+* **AUTOSCAN**: The plugin automatically starts a scan if changes were previously made to a volume. *(You can disable this feature in the plugin settings. The scan is only triggered when loading the plugin section).*
+* Added a button to scan all availables volumes at once! 
+* You can now manage access and usage of the plugin in the user permissions management.
+* Added the time since last scan for each volume
+* Added a badge featuring the number of freeable assets
+<!-- TODO -->
+* search solutions for relation changes
+
+### Changed
+* Lifted the admin requirement to delete assets in favor of native permissions.
+* Improved the detection of changes in volumes to mark them as outdated.
+* Improved messages and translations.
+* The page now scrolls itself to the scanned volume after its analyze or its cleanup.
+
 ## 1.1.2 - 2023.10.02
 ### Added
 * Added French translation. Bonjour 🔥

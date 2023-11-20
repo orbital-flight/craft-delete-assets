@@ -10,6 +10,8 @@ use craft\base\Model;
 class DuaModel extends Model {
     // == Properties --------------------------------
     public int $volumeId; // The volume id for which those data stand
+    public bool $outdated = false; // Whether the scan is outdated
+    public bool $locked = false; // Whether this volume is locked
     public int $totalAssets; // Total assets 
     public int $usedAssets; // Total used assets 
     public int $revisionAssets; // Total assets used only in revisions and drafts 
@@ -20,6 +22,7 @@ class DuaModel extends Model {
     public int $deletableAssetsRatio; // % of deletable assets / total assets
     public int $revisionAssetsRatio; // % of revision and draft assets / deletable assets
     public int $unusedAssetsRatio; // % of unused assets / deletable assets
+    public string $age; // An readable string stating how much time has passed since the last scan
 
     // == Methods --------------------------------
     public function __toString() {

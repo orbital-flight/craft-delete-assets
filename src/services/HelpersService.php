@@ -5,7 +5,9 @@
 
 namespace orbitalflight\deleteassets\services;
 
+use Craft;
 use craft\base\Component;
+use craft\helpers\DateTimeHelper;
 
 class HelpersService extends Component {
     /**
@@ -24,6 +26,43 @@ class HelpersService extends Component {
             }
         } else {
             return $size . " B";
+        }
+    }
+    
+    /**
+     * getAge
+     * Returns a readable sentence about the elapsed time since a given date
+     *
+     * @param  mixed $dateUpdated
+     * @return string
+     */
+    public function getAge(string $dateUpdated): string {
+        $now = DateTimeHelper::now();
+        $dateObj = DateTimeHelper::toDateTime($dateUpdated);
+        $diff = $now->diff($dateObj);
+
+        if ($diff->d >= 1) {
+            if ($diff->d > 1) {
+                return Craft::t('delete-assets', "{0} days ago", [$diff->d]);
+            } else {
+                return Craft::t('delete-assets', "yesterday", [$diff->d]);
+            }
+        } else if ($diff->h >= 1) {
+            if ($diff->h > 1) {
+                return Craft::t('delete-assets', "{0} hours ago", [$diff->h]);
+            } else {
+                return Craft::t('delete-assets', "1 hour ago", [$diff->h]);
+            }
+        } else if ($diff->i >= 1) {
+            if ($diff->i > 1) {
+                return Craft::t('delete-assets', "{0} minutes ago", [$diff->i]);
+            } else {
+                return Craft::t('delete-assets', "1 minute ago", [$diff->i]);
+            }
+        } else if ($diff->s > 6) {
+            return Craft::t('delete-assets', "{0} seconds ago", [$diff->s]);
+        } else {
+            return Craft::t('delete-assets', "just now");
         }
     }
     
