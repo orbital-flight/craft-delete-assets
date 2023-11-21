@@ -21,6 +21,7 @@ class m231115_161431_dua_two extends Migration {
         $table = DuaRecord::tableName();
 
         $this->addColumn($table, 'outdated', $this->boolean()->notNull()->defaultValue(false));
+        $this->addColumn($table, 'locked', $this->boolean()->notNull()->defaultValue(false));
         Craft::$app->db->schema->refresh();
 
         return true;

@@ -7,8 +7,6 @@
 * You can now manage access and usage of the plugin in the user permissions management.
 * Added the time since last scan for each volume
 * Added a badge featuring the number of freeable assets
-<!-- TODO -->
-* search solutions for relation changes
 
 ### Changed
 * Lifted the admin requirement to delete assets in favor of native permissions.

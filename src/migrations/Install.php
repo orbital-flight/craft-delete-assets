@@ -24,6 +24,7 @@ class Install extends Migration {
                 'id' => $this->primaryKey(),
                 'volumeId' => $this->integer()->notNull(),
                 'outdated' => $this->boolean()->notNull()->defaultValue(false),
+                'locked' => $this->boolean()->notNull()->defaultValue(false),
                 'totalAssets' => $this->integer()->notNull(),
                 'usedAssets' => $this->integer()->notNull(),
                 'usedAssetsSize' => $this->integer()->notNull(),
