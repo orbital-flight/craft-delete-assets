@@ -20,7 +20,7 @@
 
 ## 1.1.2 - 2023.10.02
 ### Added
-* Added French translation. Bonjour 🔥
+* Added French translation. Bonjour
 
 ## 1.1.1 - 2023.10.02
 ### Fixed
