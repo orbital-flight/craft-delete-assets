@@ -1,10 +1,10 @@
 # Release Notes for Delete Unused Assets
 
-## 2.0.1 – 2023.12.14
+## 2.0.1 - 2023.12.14
 ### Fixed
 * Fixed a bug where size values could be out of range for the database in case of volumes with many assets ([#2](https://github.com/orbital-flight/craft-delete-assets/issues/2)).
 
-## 2.0.0 – 2023.11.22
+## 2.0.0 - 2023.11.22
 ### Added
 * **AUTOSCAN**: The plugin automatically starts a scan if changes were previously made to a volume. *(You can disable this feature in the plugin settings. The scan is only triggered when loading the plugin page).*
 * Added a button to scan all availables volumes at once! 
@@ -20,7 +20,7 @@
 
 ## 1.1.2 - 2023.10.02
 ### Added
-* Added French translation. Bonjour
+* Added French translation. Bonjour 🔥
 
 ## 1.1.1 - 2023.10.02
 ### Fixed
